@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using CBPSDK;
 
 namespace CBPRoHPlugin
 {
-    public class RoHPlugin
+    public class RoHPlugin : IPluginCBP
     {
         public string PluginTitle => "Rise of Humankind (loader/unloader)";
         public string PluginVersion => "0.1.0";
