@@ -12,7 +12,7 @@ namespace CBPRoHPlugin
     public class RoHPlugin : IPluginCBP
     {
         public string PluginTitle => "Rise of Humankind (loader/unloader)";
-        public string PluginVersion => "0.1.0";
+        public string PluginVersion => "0.2.0";
         public string PluginAuthor => "MHLoppy";
         public bool CBPCompatible => false;
         public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark";
@@ -41,7 +41,7 @@ namespace CBPRoHPlugin
 
             CheckIfLoaded();//this can be important to do here, otherwise the bool might be accessed without a value depending on how other stuff is set up
 
-            MessageBox.Show(Directory.GetCurrentDirectory().ToString());
+            //MessageBox.Show(Directory.GetCurrentDirectory().ToString());
         }
 
         public bool CheckIfLoaded()
