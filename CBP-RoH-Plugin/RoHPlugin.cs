@@ -12,10 +12,10 @@ namespace CBPRoHPlugin
     public class RoHPlugin : IPluginCBP
     {
         public string PluginTitle => "Rise of Humankind (loader/unloader)";
-        public string PluginVersion => "0.2.0";
+        public string PluginVersion => "0.3.0";
         public string PluginAuthor => "MHLoppy";
         public bool CBPCompatible => false;
-        public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark";
+        public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark.";
         public bool IsSimpleMod => true;
 
         private string workshopRoH;
@@ -32,7 +32,7 @@ namespace CBPRoHPlugin
             if (!File.Exists(loadedRoH))
             {
                 File.WriteAllText(loadedRoH, "0");
-                MessageBox.Show("Plugin detected for first time. Created file: " + loadedRoH);
+                Console.WriteLine("Plugin detected for first time. Created file: " + loadedRoH);
             }
             else
             {
@@ -40,6 +40,7 @@ namespace CBPRoHPlugin
             }
 
             CheckIfLoaded();//this can be important to do here, otherwise the bool might be accessed without a value depending on how other stuff is set up
+            ForceUpdatePluginIfLoaded();
 
             //MessageBox.Show(Directory.GetCurrentDirectory().ToString());
         }
@@ -64,7 +65,7 @@ namespace CBPRoHPlugin
             {
                 try
                 {
-                    DirectoryCopy(workshopRoH, localRoH, true);
+                    DirectoryCopy(workshopRoH, localRoH, true, false);
                     File.WriteAllText(loadedRoH, "1");
                     CheckIfLoaded();
                     MessageBox.Show("Rise of Humankind - The Calm and The Storm has been installed.");
@@ -76,6 +77,25 @@ namespace CBPRoHPlugin
             }
             else
                 MessageBox.Show("No action has been taken.");
+        }
+
+        private void ForceUpdatePluginIfLoaded()
+        {
+            // only force update if already loaded
+            if (CheckIfLoaded())
+            {
+                try
+                {
+                    DirectoryCopy(workshopRoH, localRoH, true, true);
+                    File.WriteAllText(loadedRoH, "1");
+                    CheckIfLoaded();
+                    Console.WriteLine("Rise of Humankind has been re-installed (updated).");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error updating RoH in local mods folder: " + ex);
+                }
+            }
         }
 
         public void UnloadPlugin(string workshopModsPath, string localModsPath)
@@ -98,8 +118,8 @@ namespace CBPRoHPlugin
                 MessageBox.Show("No action has been taken.");
         }
 
-        // MS reference implementation
-        public void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        // MS reference implementation, but with an extra bool to specify file overwriting
+        public void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs, bool overwriteFiles)
         {
             // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
@@ -121,7 +141,7 @@ namespace CBPRoHPlugin
             foreach (FileInfo file in files)
             {
                 string tempPath = Path.Combine(destDirName, file.Name);
-                file.CopyTo(tempPath, false);
+                file.CopyTo(tempPath, overwriteFiles);
             }
 
             // If copying subdirectories, copy them and their contents to new location.
@@ -130,7 +150,7 @@ namespace CBPRoHPlugin
                 foreach (DirectoryInfo subdir in dirs)
                 {
                     string tempPath = Path.Combine(destDirName, subdir.Name);
-                    DirectoryCopy(subdir.FullName, tempPath, copySubDirs);
+                    DirectoryCopy(subdir.FullName, tempPath, copySubDirs, overwriteFiles);
                 }
             }
         }
