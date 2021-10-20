@@ -12,7 +12,7 @@ namespace CBPRoHPlugin
     public class RoHPlugin : IPluginCBP
     {
         public string PluginTitle => "Rise of Humankind (loader/unloader)";
-        public string PluginVersion => "0.3.0";
+        public string PluginVersion => "0.4.0";
         public string PluginAuthor => "MHLoppy";
         public bool CBPCompatible => false;
         public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark.";
@@ -32,7 +32,7 @@ namespace CBPRoHPlugin
             if (!File.Exists(loadedRoH))
             {
                 File.WriteAllText(loadedRoH, "0");
-                Console.WriteLine("Plugin detected for first time. Created file: " + loadedRoH);
+                MessageBox.Show("Plugin detected for first time. Created file: " + loadedRoH);
             }
             else
             {
@@ -93,7 +93,7 @@ namespace CBPRoHPlugin
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error updating RoH in local mods folder: " + ex);
+                    MessageBox.Show("Error updating RoH in local mods folder: " + ex);
                 }
             }
         }
