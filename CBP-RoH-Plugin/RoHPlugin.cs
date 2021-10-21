@@ -12,11 +12,12 @@ namespace CBPRoHPlugin
     public class RoHPlugin : IPluginCBP
     {
         public string PluginTitle => "Rise of Humankind (loader/unloader)";
-        public string PluginVersion => "0.4.0";
+        public string PluginVersion => "0.5.0";
         public string PluginAuthor => "MHLoppy";
         public bool CBPCompatible => false;
         public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark.";
         public bool IsSimpleMod => true;
+        public string LoadResult { get; set; }
 
         private string workshopRoH;
         private string localRoH;
@@ -31,8 +32,19 @@ namespace CBPRoHPlugin
             //if file doesn't exist, make one
             if (!File.Exists(loadedRoH))
             {
-                File.WriteAllText(loadedRoH, "0");
-                MessageBox.Show("Plugin detected for first time. Created file: " + loadedRoH);
+                try
+                {
+                    File.WriteAllText(loadedRoH, "0");
+                    LoadResult = (PluginTitle + " completed first time setup successfully.");
+                    MessageBox.Show(PluginTitle + " detected for first time. Created file:\n" + loadedRoH);
+                }
+                catch (Exception ex)
+                {
+                    LoadResult = (PluginTitle + ": error writing first-time file:\n\n" + ex);
+                    MessageBox.Show(PluginTitle + ": error writing first-time file:\n\n" + ex);
+                    // loading plugins tab from this point will probably cause an error because the messagebox will interrupt control generation
+                    // I tried using dispatcher but it didn't seem to provide the expected low-effort resolution https://stackoverflow.com/questions/23452864/wpf-dispatcher-processing-has-been-suspended-but-messages-are-still-being-pro
+                }
             }
             else
             {
@@ -40,14 +52,19 @@ namespace CBPRoHPlugin
             }
 
             CheckIfLoaded();//this can be important to do here, otherwise the bool might be accessed without a value depending on how other stuff is set up
-            ForceUpdatePluginIfLoaded();
-
-            //MessageBox.Show(Directory.GetCurrentDirectory().ToString());
         }
 
         public bool CheckIfLoaded()
         {
-            if (File.ReadAllText(loadedRoH) == "1")
+            //this doesn't seem to solve what I wanted it to solve (unexpectedly getting a null value on the IsLoaded bool after not calling DoSomething first)
+            /*if (localRoH == null)
+            {
+                localRoH = Path.Combine(Directory.GetCurrentDirectory(), "CBP", "riseofhumankind.txt");
+                //MessageBox.Show("new path");
+            }*/
+            //MessageBox.Show(localRoH);//just debug
+
+            if (File.ReadAllText(loadedRoH) != "0")
             {
                 Console.WriteLine(PluginTitle + "is loaded");
                 return true;
@@ -61,27 +78,28 @@ namespace CBPRoHPlugin
 
         public void LoadPlugin(string workshopModsPath, string localModsPath)
         {
-            if (MessageBox.Show("Please confirm that you want to install Rise of Humankind to this location:\n" + localRoH, "Please confirm mod installation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Please confirm that you want to install Rise of Humankind to this location:\n" + localRoH, "Confirm Mod Installation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 try
                 {
                     DirectoryCopy(workshopRoH, localRoH, true, false);
                     File.WriteAllText(loadedRoH, "1");
                     CheckIfLoaded();
+                    LoadResult = (PluginTitle + " was installed successfully.");
                     MessageBox.Show("Rise of Humankind - The Calm and The Storm has been installed.");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error copying RoH to local mods folder: " + ex);
+                    LoadResult = (PluginTitle + " had an error copying to local mods folder: " + ex);
+                    MessageBox.Show("Error copying RoH to local mods folder:\n\n" + ex);
                 }
             }
             else
                 MessageBox.Show("No action has been taken.");
         }
 
-        private void ForceUpdatePluginIfLoaded()
+        public void UpdatePlugin(string workshopModsPath, string localModsPath)
         {
-            // only force update if already loaded
             if (CheckIfLoaded())
             {
                 try
@@ -89,36 +107,73 @@ namespace CBPRoHPlugin
                     DirectoryCopy(workshopRoH, localRoH, true, true);
                     File.WriteAllText(loadedRoH, "1");
                     CheckIfLoaded();
-                    Console.WriteLine("Rise of Humankind has been re-installed (updated).");
+                    LoadResult = (PluginTitle + " re-installed (updated) successfully.");
+                    MessageBox.Show("Rise of Humankind has been re-installed (updated).");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error updating RoH in local mods folder: " + ex);
+                    LoadResult = (PluginTitle + " had an error updating files: " + ex);
+                    MessageBox.Show(PluginTitle + ": error updating files:\n\n" + ex);
                 }
             }
         }
 
+        /*private void ForceUpdatePluginIfLoaded()
+        {
+            // only force update if already loaded
+            if (CheckIfLoaded())
+            {
+                try
+                {
+                    // only update it if it hasn't been updated already, by using "2" to signify an update has already been done
+                    int number = Convert.ToInt32(File.ReadAllText(loadedRoH));
+                    if (number > 1)
+                    {
+                        File.WriteAllText(loadedRoH, "1");
+                    }
+                    else
+                    {
+                        
+                        DirectoryCopy(workshopRoH, localRoH, true, true);
+                        File.WriteAllText(loadedRoH, "2");
+                    }
+
+                    DirectoryCopy(workshopRoH, localRoH, true, true);
+                    File.WriteAllText(loadedRoH, "1");
+                    CheckIfLoaded();
+                    Console.WriteLine("Rise of Humankind has been re-installed (updated).");
+                }
+                catch (Exception ex)
+                {
+                    // because this is called from DoSomething, can't use messagebox
+                    Console.WriteLine("Error updating RoH in local mods folder: " + ex);
+                }
+            }
+        }*/
+
         public void UnloadPlugin(string workshopModsPath, string localModsPath)
         {
-            if (MessageBox.Show("Please confirm that you want to remove Rise of Humankind from this location:\n" + localRoH, "Please confirm mod removal", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Please confirm that you want to remove Rise of Humankind from this location:\n" + localRoH, "Confirm Mod Removal", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 try
                 {
                     Directory.Delete(localRoH, true);
                     File.WriteAllText(loadedRoH, "0");
                     CheckIfLoaded();
+                    LoadResult = (PluginTitle + " local mod files were successfully removed.");
                     MessageBox.Show("Rise of Humankind - The Calm and The Storm has been uninstalled.");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error removing local copy of RoH: " + ex);
+                    LoadResult = (PluginTitle + " errored while removing local mod files: " + ex);
+                    MessageBox.Show("Error removing local copy of RoH:\n\n" + ex);
                 }
             }
             else
                 MessageBox.Show("No action has been taken.");
         }
 
-        // MS reference implementation, but with an extra bool to specify file overwriting
+        // MS reference implementation, but with an extra bool to specify file overwriting since the force update needs that
         public void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs, bool overwriteFiles)
         {
             // Get the subdirectories for the specified directory.

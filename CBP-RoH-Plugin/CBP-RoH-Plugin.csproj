@@ -30,8 +30,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CBPSDK">
+    <Reference Include="CBPSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\CBP-SDK\CBP-SDK\bin\Release\CBPSDK.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
