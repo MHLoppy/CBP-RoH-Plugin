@@ -12,10 +12,10 @@ namespace CBPRoHPlugin
     public class RoHPlugin : IPluginCBP
     {
         public string PluginTitle => "Rise of Humankind (loader/unloader)";
-        public string PluginVersion => "0.5.0";
+        public string PluginVersion => "0.5.1";
         public string PluginAuthor => "MHLoppy";
         public bool CBPCompatible => false;
-        public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark.";
+        public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark.\n\nSource code: https://github.com/MHLoppy/CBP-RoH-Plugin";
         public bool IsSimpleMod => true;
         public string LoadResult { get; set; }
 
