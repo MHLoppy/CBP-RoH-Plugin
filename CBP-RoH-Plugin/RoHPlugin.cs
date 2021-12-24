@@ -25,7 +25,7 @@ namespace CBPRoHPlugin
         private string loadedRoH;
 
         public void DoSomething(string workshopModsPath, string localModsPath)
-        {
+        {   
             workshopRoH = Path.Combine(workshopModsPath, "2613116925");
             localRoH = Path.Combine(localModsPath, "Rise of Humankind - The Calm and The Storm");
             loadedRoH = Path.GetFullPath(Path.Combine(localModsPath, @"..\", "CBP", "riseofhumankind.txt"));
@@ -49,7 +49,7 @@ namespace CBPRoHPlugin
             }
             else
             {
-                Console.WriteLine(loadedRoH + " already exists.");
+                LoadResult = (loadedRoH + " already exists; no action taken.");
             }
 
             CheckIfLoaded();//this can be important to do here, otherwise the bool might be accessed without a value depending on how other stuff is set up
@@ -65,16 +65,24 @@ namespace CBPRoHPlugin
             }*/
             //MessageBox.Show(localRoH);//just debug
 
+            // second part is duplicate text check (since the checkifloaded runs multiple times, it will duplicate text without it)
             if (File.ReadAllText(loadedRoH) != "0")
             {
-                Console.WriteLine(PluginTitle + "is loaded");
+                if (!LoadResult.Contains("is loaded"))
+                {
+                    LoadResult += "\n\n" + PluginTitle + " is loaded.";
+                }
                 return true;
             }
             else
             {
-                Console.WriteLine(PluginTitle + "is not loaded");
+                if (!LoadResult.Contains("is not loaded"))
+                {
+                    LoadResult += "\n\n" + PluginTitle + " is not loaded.";
+                }
                 return false;
             }
+            
         }
 
         public void LoadPlugin(string workshopModsPath, string localModsPath)
@@ -108,12 +116,12 @@ namespace CBPRoHPlugin
                     DirectoryCopy(workshopRoH, localRoH, true, true);
                     File.WriteAllText(loadedRoH, "1");
                     CheckIfLoaded();
-                    LoadResult = (PluginTitle + " re-installed / updated successfully.");
+                    LoadResult += (PluginTitle + " re-installed / updated successfully.");
                     //MessageBox.Show("Rise of Humankind has been re-installed (updated).");
                 }
                 catch (Exception ex)
                 {
-                    LoadResult = (PluginTitle + " had an error updating files:\n" + ex);
+                    LoadResult += (PluginTitle + " had an error updating files:\n" + ex);
                     //MessageBox.Show(PluginTitle + ": error updating files:\n\n" + ex);
                 }
             }
