@@ -12,7 +12,7 @@ namespace CBPRoHPlugin
     public class RoHPlugin : IPluginCBP
     {
         public string PluginTitle => "Rise of Humankind (loader/unloader)";
-        public string PluginVersion => "0.5.1";
+        public string PluginVersion => "0.6.0";
         public string PluginAuthor => "MHLoppy";
         public bool CBPCompatible => false;
         public bool DefaultMultiplayerCompatible => false;
