@@ -15,6 +15,7 @@ namespace CBPRoHPlugin
         public string PluginVersion => "0.5.1";
         public string PluginAuthor => "MHLoppy";
         public bool CBPCompatible => false;
+        public bool DefaultMultiplayerCompatible => false;
         public string PluginDescription => "A loader/unloader for the mod \"Rise of Humankind - The Calm and The Storm\" by Tark.\n\nSource code: https://github.com/MHLoppy/CBP-RoH-Plugin";
         public bool IsSimpleMod => true;
         public string LoadResult { get; set; }
@@ -35,13 +36,13 @@ namespace CBPRoHPlugin
                 try
                 {
                     File.WriteAllText(loadedRoH, "0");
-                    LoadResult = (PluginTitle + " completed first time setup successfully.");
+                    LoadResult = (PluginTitle + " completed first time setup successfully. Created file:\n" + loadedRoH);
                     MessageBox.Show(PluginTitle + " detected for first time. Created file:\n" + loadedRoH);
                 }
                 catch (Exception ex)
                 {
                     LoadResult = (PluginTitle + ": error writing first-time file:\n\n" + ex);
-                    MessageBox.Show(PluginTitle + ": error writing first-time file:\n\n" + ex);
+                    // MessageBox.Show(PluginTitle + ": error writing first-time file:\n\n" + ex);
                     // loading plugins tab from this point will probably cause an error because the messagebox will interrupt control generation
                     // I tried using dispatcher but it didn't seem to provide the expected low-effort resolution https://stackoverflow.com/questions/23452864/wpf-dispatcher-processing-has-been-suspended-but-messages-are-still-being-pro
                 }
@@ -107,13 +108,13 @@ namespace CBPRoHPlugin
                     DirectoryCopy(workshopRoH, localRoH, true, true);
                     File.WriteAllText(loadedRoH, "1");
                     CheckIfLoaded();
-                    LoadResult = (PluginTitle + " re-installed (updated) successfully.");
-                    MessageBox.Show("Rise of Humankind has been re-installed (updated).");
+                    LoadResult = (PluginTitle + " re-installed / updated successfully.");
+                    //MessageBox.Show("Rise of Humankind has been re-installed (updated).");
                 }
                 catch (Exception ex)
                 {
-                    LoadResult = (PluginTitle + " had an error updating files: " + ex);
-                    MessageBox.Show(PluginTitle + ": error updating files:\n\n" + ex);
+                    LoadResult = (PluginTitle + " had an error updating files:\n" + ex);
+                    //MessageBox.Show(PluginTitle + ": error updating files:\n\n" + ex);
                 }
             }
         }
