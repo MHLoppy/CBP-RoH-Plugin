@@ -116,12 +116,12 @@ namespace CBPRoHPlugin
                     DirectoryCopy(workshopRoH, localRoH, true, true);
                     File.WriteAllText(loadedRoH, "1");
                     CheckIfLoaded();
-                    LoadResult += (PluginTitle + " re-installed / updated successfully.");
+                    LoadResult += ("\n" + PluginTitle + " re-installed / updated successfully.");
                     //MessageBox.Show("Rise of Humankind has been re-installed (updated).");
                 }
                 catch (Exception ex)
                 {
-                    LoadResult += (PluginTitle + " had an error updating files:\n" + ex);
+                    LoadResult += ("\n" + PluginTitle + " had an error updating files:\n" + ex);
                     //MessageBox.Show(PluginTitle + ": error updating files:\n\n" + ex);
                 }
             }
